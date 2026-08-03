@@ -1,0 +1,33 @@
+en
+conf t
+!
+hostname WEB-SERVER
+!
+no ip domain-lookup
+!
+line console 0
+ logging synchronous
+ exec-timeout 0 0
+ length 0
+ exit
+!
+line vty 0 4
+ logging synchronous
+ exec-timeout 0 0
+ length 0
+ exit
+!
+end
+!
+wr
+!
+conf t
+!
+int gi0/0
+ ip add 203.0.113.26 255.255.255.252     ! R-ISP gi4/0(203.0.113.25)과 페어
+ no sh
+!
+int lo0
+ ip add 8.8.8.8 255.255.255.255         ! "인터넷 서버" 역할 (DNS 흉내 IP, 핑/접속 테스트 대상)
+!
+ip route 0.0.0.0 0.0.0.0 203.0.113.25       ! 모든 응답 트래픽 → R-ISP로 (디폴트)
