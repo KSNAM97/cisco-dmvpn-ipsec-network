@@ -13,7 +13,7 @@
 | 항목 | 내용 |
 | --- | --- |
 | 주제 | DMVPN(mGRE+IPsec) Phase2/3 · OSPF-EIGRP 재분배 · HSRP 이중화 · NAT |
-| 장비 구성 | HQ-Edge1/2 (Router), SW-Core1/2 (L3-Switch), SW-Access1~4 (L2-Switch), BR1~4 (Router), R-ISP |
+| 장비 구성 | HQ-Edge1/2 (Router), SW-Core1/2 (L3-Switch), SW-Access1 ~ 4 (L2-Switch), BR1 ~ 4 (Router), R-ISP |
 | 핵심 기술 | DMVPN Phase2 / Phase3, IPsec AES-256/SHA/DH5, OSPF Area 0, EIGRP AS100/200, Route 재분배(태그), HSRP Track, VTPv3, EtherChannel(LACP), NAT/PAT |
 | 시뮬레이터 | GNS3 / Cisco IOS |
 | 검증 | `show dmvpn`, `show crypto isakmp sa`, `show ip ospf neighbor`, `show standby brief`, `show ip nat translations` 등 |
