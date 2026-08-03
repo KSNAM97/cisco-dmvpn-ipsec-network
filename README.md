@@ -89,7 +89,7 @@ cisco-dmvpn-ipsec-network/
 
 | # | 단계 | 대상 장비 | 핵심 내용 |
 | --- | --- | --- | --- |
-| **1** | **VPC Config** | PC1~PC8, BR-PC1~4 | VLAN·지사 단말 IP / GW 배치 |
+| **1** | **VPC Config** | PC1 ~ PC8, BR-PC1 ~ 4 | VLAN·지사 단말 IP / GW 배치 |
 | **2** | **WAN Config** | R-ISP · Edge1/2 · BR1/2 | 203.0.113.0/24 /30 분할, ISP 링크 |
 | **3** | **HQ L2 + EtherChannel** | SW-Core1/2 · Access1~4 | VTPv3 · LACP Po1 · VLAN 분리 · 트렁킹 |
 | **4** | **STP + SVI + HSRP** | SW-Core1/2 | Rapid-PVST+ · SVI · HSRP Track 이중화 |
