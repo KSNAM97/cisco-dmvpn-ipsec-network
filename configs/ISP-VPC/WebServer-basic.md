@@ -7,8 +7,8 @@
 ## Configuration
 
 ```
-en
-conf t
+enable
+configure terminal
 !
 hostname WEB-SERVER
 !
@@ -28,16 +28,16 @@ line vty 0 4
 !
 end
 !
-wr
+write memory
 !
-conf t
+configure terminal
 !
-int gi0/0
- ip add 203.0.113.26 255.255.255.252     ! R-ISP gi4/0(203.0.113.25)과 페어
- no sh
+interface gi0/0
+ ip address 203.0.113.26 255.255.255.252     ! R-ISP gi4/0(203.0.113.25)과 페어
+ no shutdown
 !
-int lo0
- ip add 8.8.8.8 255.255.255.255         ! "인터넷 서버" 역할 (DNS 흉내 IP, 핑/접속 테스트 대상)
+interface lo0
+ ip address 8.8.8.8 255.255.255.255         ! "인터넷 서버" 역할 (DNS 흉내 IP, 핑/접속 테스트 대상)
 !
 ip route 0.0.0.0 0.0.0.0 203.0.113.25       ! 모든 응답 트래픽 → R-ISP로 (디폴트)
 ```

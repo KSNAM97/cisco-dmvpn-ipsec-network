@@ -7,8 +7,8 @@
 ## Configuration
 
 ```
-en
-conf t
+enable
+configure terminal
 !
 hostname HQ-Edge2
 !
@@ -28,23 +28,23 @@ line vty 0 4
 !
 end
 !
-wr
+write memory
 !
-conf t
+configure terminal
 !
- int gi0/0
-  ip add 203.0.113.10 255.255.255.252   ! ISP gi1/0(203.0.113.9)와 페어 (Edge1과 다른 ISP 링크)
-  no sh
+ interface gi0/0
+  ip address 203.0.113.10 255.255.255.252   ! ISP gi1/0(203.0.113.9)와 페어 (Edge1과 다른 ISP 링크)
+  no shutdown
 !
-int gi1/0
- ip add 172.168.10.2 255.255.255.252       ! 코어  P2P
- no sh
-int g2/0
- ip add 172.168.10.13 255.255.255.252
- no sh
-int gi3/0
- ip add 172.168.10.17 255.255.255.252
- no sh
+interface gi1/0
+ ip address 172.168.10.2 255.255.255.252       ! 코어  P2P
+ no shutdown
+interface gi2/0
+ ip address 172.168.10.13 255.255.255.252
+ no shutdown
+interface gi3/0
+ ip address 172.168.10.17 255.255.255.252
+ no shutdown
 !
 router ospf 1
  router-id 22.22.22.22                 ! Edge1=11.11.11.11 / Edge2=22.22.22.22
@@ -58,17 +58,17 @@ router ospf 1
  net 172.168.10.12 0.0.0.3 area 0
  net 172.168.10.16 0.0.0.3 area 0        
 !
-int g1/0
+interface gi1/0
  ip ospf network point-to-point
  ip ospf hello-interval 5
  ip ospf dead-interval 15
 !
-int gi2/0
+interface gi2/0
  ip ospf network point-to-point
  ip ospf hello-interval 5
  ip ospf dead-interval 15
 !
- int gi3/0
+ interface gi3/0
  ip ospf network point-to-point
  ip ospf hello-interval 5
  ip ospf dead-interval 15
@@ -92,8 +92,8 @@ crypto isakmp keepalive 10 3
 !
 crypto isakmp key DMVPN-HUB address 0.0.0.0 0.0.0.0
 !
-int tu0                      
- ip add 172.16.0.2 255.255.255.0
+interface tu0                      
+ ip address 172.16.0.2 255.255.255.0
  ip mtu 1400
  ip tcp adjust-mss 1360
  tunnel source gi0/0
@@ -176,21 +176,21 @@ ip access-list extended NAT-ACL-HQ
 !
 ip nat inside source list NAT-ACL-HQ interface gi0/0 overload
 !
-int gi0/0
+interface gi0/0
  ip nat outside
 !
-int tu0
+interface tu0
  ip nat inside
 !
-int gi1/0
+interface gi1/0
  ip nat inside
-int gi2/0
+interface gi2/0
  ip nat inside
-int gi3/0
+interface gi3/0
  ip nat inside
 !
- int tu1
-  ip add 172.16.10.2 255.255.255.0
+ interface tu1
+  ip address 172.16.10.2 255.255.255.0
   ip mtu 1400
   ip tcp adjust-mss 1360
   tunnel source gi0/0

@@ -7,8 +7,8 @@
 ## Configuration
 
 ```
-en
-conf t
+enable
+configure terminal
 !
 hostname HQ-Edge1
 !
@@ -28,24 +28,24 @@ line vty 0 4
 !
 end
 !
-wr
+write memory
 !
-conf t
+configure terminal
 !
 ! ===== 인터페이스 IP =====
-int gi0/0
-  ip add 203.0.113.6 255.255.255.252  ! ISP 공인 WAN (R-ISP gi0/0 203.0.113.5와 /30 페어), DMVPN tunnel source
-  no sh
+interface gi0/0
+  ip address 203.0.113.6 255.255.255.252  ! ISP 공인 WAN (R-ISP gi0/0 203.0.113.5와 /30 페어), DMVPN tunnel source
+  no shutdown
 !
-int gi1/0
- ip add 172.168.10.1 255.255.255.252 ! SW-Core1 gi0/0(172.168.10.6)와 연결되는 OSPF P2P 링크
- no sh
-int g2/0
- ip add 172.168.10.9 255.255.255.252 ! SW-Core2 gi0/1(172.168.10.10)과 연결되는 OSPF P2P 링크
- no sh
-int gi3/0
- ip add 172.168.10.5 255.255.255.252 ! Edge1 추가 P2P 링크
- no sh
+interface gi1/0
+ ip address 172.168.10.1 255.255.255.252 ! SW-Core1 gi0/0(172.168.10.6)와 연결되는 OSPF P2P 링크
+ no shutdown
+interface gi2/0
+ ip address 172.168.10.9 255.255.255.252 ! SW-Core2 gi0/1(172.168.10.10)과 연결되는 OSPF P2P 링크
+ no shutdown
+interface gi3/0
+ ip address 172.168.10.5 255.255.255.252 ! Edge1 추가 P2P 링크
+ no shutdown
 !
 ! ===== 내부 OSPF (본사 LAN 도메인) =====
 router ospf 1
@@ -62,18 +62,18 @@ router ospf 1
 !
 ! P2P + 빠른 컨버전스용 hello/dead 타이머 (양단 동일해야 인접 성립)
 !
- int gi1/0
+ interface gi1/0
  ip ospf network point-to-point 
  ip ospf hello-interval 5
  ip ospf dead-interval 15
 
 !
-int gi2/0
+interface gi2/0
  ip ospf network point-to-point
  ip ospf hello-interval 5
  ip ospf dead-interval 15
 !
- int gi3/0
+ interface gi3/0
  ip ospf network point-to-point
  ip ospf hello-interval 5
  ip ospf dead-interval 15
@@ -100,8 +100,8 @@ crypto isakmp keepalive 10 3       ! DPD (10초 간격, 3회 재시도)
 crypto isakmp key DMVPN-HUB address 0.0.0.0 0.0.0.0  ! ===== DMVPN tu0 : EIGRP 100 도메인 (Phase 3, mGRE 허브) =====
 !
 ! ===== DMVPN tu0 : EIGRP 100 도메인 (Phase 3, mGRE 허브) =====
-int tu0                    
- ip add 172.16.0.1 255.255.255.0      ! tu0 NBMA 오버레이 .1 (Edge2는 .2)
+interface tu0                    
+ ip address 172.16.0.1 255.255.255.0      ! tu0 NBMA 오버레이 .1 (Edge2는 .2)
  ip mtu 1400
  ip tcp adjust-mss 1360                   ! TCP MSS 조정 (단편화 방지)
  tunnel source gi0/0
@@ -185,22 +185,22 @@ ip access-list extended NAT-ACL-HQ
 !
 ip nat inside source list NAT-ACL-HQ interface gi0/0 overload
 !
-int gi0/0
+interface gi0/0
  ip nat outside
 !
-int tu0
+interface tu0
  ip nat inside
 !
-int gi1/0
+interface gi1/0
  ip nat inside
-int gi2/0
+interface gi2/0
  ip nat inside
-int gi3/0
+interface gi3/0
  ip nat inside
 !
 ! ===== DMVPN tu1 : EIGRP 200 도메인 =====
-int tu1
-  ip add 172.16.10.1 255.255.255.0  ! tu1 오버레이 .1 (Edge2 .2)
+interface tu1
+  ip address 172.16.10.1 255.255.255.0  ! tu1 오버레이 .1 (Edge2 .2)
   ip mtu 1400
   ip tcp adjust-mss 1360
   tunnel source gi0/0

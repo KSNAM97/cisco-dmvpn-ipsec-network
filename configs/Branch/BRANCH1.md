@@ -7,8 +7,8 @@
 ## Configuration
 
 ```
-en
-conf t
+enable
+configure terminal
 !
 hostname Branch1
 !
@@ -28,11 +28,11 @@ line vty 0 4
 !
 end
 !
-wr
+write memory
 !
- int fa0/0
-  ip add 203.0.113.1 255.255.255.252
-  no sh
+ interface fa0/0
+  ip address 203.0.113.1 255.255.255.252
+  no shutdown
 !
  crypto isakmp policy 10
   encryption aes 256
@@ -51,8 +51,8 @@ wr
   set pfs group5
   set security-association lifetime seconds 3600
 !
- int tu0
-  ip add 172.16.0.11 255.255.255.0                            ! tu0 오버레이 (허브 .1/.2, BR1 .11)
+ interface tu0
+  ip address 172.16.0.11 255.255.255.0                            ! tu0 오버레이 (허브 .1/.2, BR1 .11)
   ip mtu 1400
   ip tcp adjust-mss 1360
   tunnel source fa0/0
@@ -70,9 +70,9 @@ wr
   tunnel protection ipsec profile DMVPN-PROFILE shared
 !
 ! ===== 지사 LAN =====
-int fa0/1
- ip add 172.10.20.1 255.255.255.0
- no sh
+interface fa0/1
+ ip address 172.10.20.1 255.255.255.0
+ no shutdown
 !
  router eigrp 100
   no auto-summary
@@ -93,13 +93,13 @@ ip access-list extended NAT-ACL-BR1
 !
 ip nat inside source list NAT-ACL-BR1 interface fa0/0 overload
 !
-int fa0/0
+interface fa0/0
  ip nat outside
 !
-int fa0/1
+interface fa0/1
  ip nat inside
 !
-int tu0
+interface tu0
  ip nat inside
 !
 ```

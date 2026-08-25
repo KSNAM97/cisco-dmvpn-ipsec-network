@@ -7,8 +7,8 @@
 ## Configuration
 
 ```
-en
-conf t
+enable
+configure terminal
 !
 hostname SW-Core2               ! Core2 server (단, primary는 Core1이 force로 잡음)
 !
@@ -30,22 +30,22 @@ line vty 0 4
 !
 end
 !
-wr
+write memory
 !
-conf t
+configure terminal
 !
 vtp password Cisco123
 vtp domain HQ
 vtp version 3
 vtp mode server             ! Core2 server (단, primary는 Core1이 force로 잡음)
 !
-int range gi0/2 - 3
+interface range gi0/2 - 3
  switchport trunk encapsulation dot1q
  switchport mode trunk
  channel-group 1 mode active
- no sh
+ no shutdown
 !
-int port-channel 1
+interface port-channel 1
  switchport trunk encapsulation dot1q
  switchport mode trunk
  switchport trunk allowed vlan 10,20,30,40,99
@@ -56,13 +56,13 @@ spanning-tree vlan 1,10,20,99 root secondary      ! 10/20/99는 백업
 !
 port-channel load-balance src-dst-ip
 !
-int range gi3/0 - 3
+interface range gi3/0 - 3
  switchport trunk encapsulation dot1q
  switchport mode trunk
  switchport trunk allowed vlan 10,20,30,40,99
- no sh
+ no shutdown
 !
-conf t
+configure terminal
 !
 spanning-tree mode rapid-pvst
 !
@@ -75,56 +75,56 @@ track 10 list boolean or
  object 1
  object 2
 !
-int vlan 10
- ip add 10.10.10.3 255.255.255.0
+interface vlan 10
+ ip address 10.10.10.3 255.255.255.0
  standby 10 ip 10.10.10.1
  standby 10 priority 100            ! VLAN10은 standby (Core1이 active)
  standby 10 timers 1 3
- no sh
+ no shutdown
 !
-int vlan 20
- ip add 10.10.20.3 255.255.255.0
+interface vlan 20
+ ip address 10.10.20.3 255.255.255.0
  standby 20 ip 10.10.20.1
  standby 20 priority 100           ! standby
  standby 20 timers 1 3
- no sh
+ no shutdown
 !
-int vlan 30
- ip add 10.10.30.3 255.255.255.0
+interface vlan 30
+ ip address 10.10.30.3 255.255.255.0
  standby 30 ip 10.10.30.1
  standby 30 priority 110           ! vlan30 = Core2 active
  standby 30 timers 1 3
  standby 30 preempt
  standby 30 preempt delay minimum 60
  standby 30 track 10 decrement 20 
- no sh
+ no shutdown
 !
-int vlan 40
- ip add 10.10.40.3 255.255.255.0
+interface vlan 40
+ ip address 10.10.40.3 255.255.255.0
  standby 40 ip 10.10.40.1
  standby 40 priority 110           ! vlan40 = Core2 active
  standby 40 timers 1 3
  standby 40 preempt
  standby 40 preempt delay minimum 60
  standby 40 track 10 decrement 20 
- no sh
+ no shutdown
 !
-int vlan 99
- ip add 10.10.99.3 255.255.255.0
+interface vlan 99
+ ip address 10.10.99.3 255.255.255.0
  standby 99 ip 10.10.99.1
  standby 99 priority 100         ! standby
  standby 99 timers 1 3
- no sh
+ no shutdown
 !
 ! ===== 엣지 L3 포트 =====
-int gi0/0
+interface gi0/0
  no switchport
- ip add 172.168.10.18 255.255.255.252   ! HQ-Edge2 gi3/0(172.168.10.17)과 P2P
- no sh
-int gi 0/1
+ ip address 172.168.10.18 255.255.255.252   ! HQ-Edge2 gi3/0(172.168.10.17)과 P2P
+ no shutdown
+interface gi 0/1
  no switchport
- ip add 172.168.10.10 255.255.255.252   ! HQ-Edge1 gi2/0(172.168.10.9)과 P2P
- no sh
+ ip address 172.168.10.10 255.255.255.252   ! HQ-Edge1 gi2/0(172.168.10.9)과 P2P
+ no shutdown
 !
 router ospf 1
  router-id 2.2.2.2
@@ -142,17 +142,17 @@ net 10.10.99.0 0.0.0.255 area 0
 net 172.168.10.16 0.0.0.3 area 0
 net 172.168.10.8 0.0.0.3 area 0
 !
-int g0/0
+interface gi0/0
  ip ospf network point-to-point
  ip ospf hello-interval 5
  ip ospf dead-interval 15
 !
-int gi0/1
+interface gi0/1
  ip ospf network point-to-point
  ip ospf hello-interval 5
  ip ospf dead-interval 15
 !
-int vlan99
+interface vlan99
  ip ospf network point-to-point
  ip ospf hello-interval 5
  ip ospf dead-interval 15

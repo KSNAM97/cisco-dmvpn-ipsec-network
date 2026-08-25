@@ -7,8 +7,8 @@
 ## Configuration
 
 ```
-en
-conf t
+enable
+configure terminal
 !
 hostname SW-Core1
 !
@@ -28,9 +28,9 @@ line vty 0 4
 !
 end
 !
-wr
+write memory
 !
-conf t
+configure terminal
 !
 ! ===== VTP v3 (VLAN 정보 중앙 관리) =====
 vtp password Cisco123
@@ -39,13 +39,13 @@ vtp version 3
 vtp mode server         ! Core1/Core2는 server, Access는 client
 !
 ! ===== Core1-Core2 간 EtherChannel (LACP) =====
-int range gi0/2 - 3
+interface range gi0/2 - 3
  switchport trunk encapsulation dot1q
  switchport mode trunk
  channel-group 1 mode active ! LACP active → Po1로 묶음
- no sh
+ no shutdown
 !
-int port-channel 1
+interface port-channel 1
  switchport trunk encapsulation dot1q
  switchport trunk allowed vlan 10,20,30,40,99
  switchport mode trunk
@@ -54,7 +54,7 @@ end
 !
  vtp primary force  ! VTPv3 primary server 강제 지정 (DB 수정 권한 보유자)
 !
-conf t
+configure terminal
 !
 ! ===== VLAN 정의 (VTP server에서 생성 → client로 전파) =====
 vlan 10
@@ -74,13 +74,13 @@ spanning-tree vlan 30,40 root secondary      ! VLAN 30/40은 백업 루트 (Core
 !
 port-channel load-balance src-dst-ip    ! EtherChannel 트래픽 분산
 !
-int range gi3/0 - 3
+interface range gi3/0 - 3
  switchport trunk encapsulation dot1q
  switchport mode trunk
  switchport trunk allowed vlan 10,20,30,40,99
- no sh
+ no shutdown
 !
-conf t
+configure terminal
 !
 spanning-tree mode rapid-pvst           ! RPVST+ (빠른 수렴)
 !
@@ -95,59 +95,59 @@ track 10 list boolean or                   ! gi0/0 OR gi0/1 둘 중 하나라도
  object 2
 !
 ! ===== VLAN 게이트웨이 + HSRP =====
-int vlan 10
- ip add 10.10.10.2 255.255.255.0
+interface vlan 10
+ ip address 10.10.10.2 255.255.255.0
  standby 10 ip 10.10.10.1                 ! 가상 게이트웨이 IP (PC가 바라보는 GW)
  standby 10 priority 110                  ! Core1이 더 높음 → vlan10 active
  standby 10 timers 1 3                    ! hello 1s / hold 3s 
  standby 10 preempt                       ! 복구 시 active 탈환
  standby 10 preempt delay minimum 60      ! 부팅 후 60초 대기 (라우팅 수렴 기다림)
  standby 10 track 10 decrement 20         ! 업링크 둘 다 죽으면 priority 110→90 (Core2에 양보)
- no sh
+ no shutdown
 !
-int vlan 20
- ip add 10.10.20.2 255.255.255.0
+interface vlan 20
+ ip address 10.10.20.2 255.255.255.0
  standby 20 ip 10.10.20.1
  standby 20 priority 110                 ! vlan20 Core1 active
  standby 20 timers 1 3                   
  standby 20 preempt
  standby 20 preempt delay minimum 60
  standby 20 track 10 decrement 20  
- no sh
+ no shutdown
 !
-int vlan 30
- ip add 10.10.30.2 255.255.255.0
+interface vlan 30
+ ip address 10.10.30.2 255.255.255.0
  standby 30 ip 10.10.30.1
  standby 30 priority 100                 ! vlan30 priority 100 → Core2(110)가 active, Core1은 standby
  standby 30 timers 1 3
- no sh
+ no shutdown
 !
-int vlan 40
- ip add 10.10.40.2 255.255.255.0
+interface vlan 40
+ ip address 10.10.40.2 255.255.255.0
  standby 40 ip 10.10.40.1
  standby 40 priority 100                 ! vlan40 Core2가 active
  standby 40 timers 1 3
- no sh
+ no shutdown
 !
-int vlan 99
- ip add 10.10.99.2 255.255.255.0
+interface vlan 99
+ ip address 10.10.99.2 255.255.255.0
  standby 99 ip 10.10.99.1                ! 관리 VLAN 게이트웨이
  standby 99 priority 110                 ! Core1 active
  standby 99 timers 1 3
  standby 99 preempt
  standby 99 preempt delay minimum 60
  standby 99 track 10 decrement 20 
- no sh
+ no shutdown
 !
 ! ===== 엣지 L3 라우티드 포트 =====
-int gi0/0
+interface gi0/0
  no switchport                        ! L3 모드 전환
- ip add 172.168.10.6 255.255.255.252  ! HQ-Edge1 gi1/0(172.168.10.5)과 P2P
- no sh
-int gi 0/1
+ ip address 172.168.10.6 255.255.255.252  ! HQ-Edge1 gi1/0(172.168.10.5)과 P2P
+ no shutdown
+interface gi 0/1
  no switchport
- ip add 172.168.10.14 255.255.255.252 ! HQ-Edge2 gi2/0(172.168.10.13)과 P2P
- no sh
+ ip address 172.168.10.14 255.255.255.252 ! HQ-Edge2 gi2/0(172.168.10.13)과 P2P
+ no shutdown
 !
 router ospf 1
  router-id 1.1.1.1
@@ -166,17 +166,17 @@ net 172.168.10.4 0.0.0.3 area 0      ! 엣지1  링크
 net 172.168.10.12 0.0.0.3 area 0     ! 엣지2  링크
 !
 ! P2P + 타이머 (엣지와 5/15 일치해야 인접)
-int g0/0
+interface gi0/0
  ip ospf network point-to-point
  ip ospf hello-interval 5
  ip ospf dead-interval 15
 !
-int gi0/1
+interface gi0/1
  ip ospf network point-to-point
  ip ospf hello-interval 5
  ip ospf dead-interval 15
 !
-int vlan99
+interface vlan99
  ip ospf network point-to-point
  ip ospf hello-interval 5
  ip ospf dead-interval 15

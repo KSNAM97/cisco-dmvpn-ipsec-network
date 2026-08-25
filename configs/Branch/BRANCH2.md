@@ -7,8 +7,8 @@
 ## Configuration
 
 ```
-en
-conf t
+enable
+configure terminal
 !
 hostname Branch2
 !
@@ -28,11 +28,11 @@ line vty 0 4
 !
 end
 !
-wr
+write memory
 !
- int Fa0/0
-  ip add 203.0.113.14 255.255.255.252               ! ISP fa5/1(203.0.113.13)와 페어
-  no sh
+ interface Fa0/0
+  ip address 203.0.113.14 255.255.255.252               ! ISP fa5/1(203.0.113.13)와 페어
+  no shutdown
 !
 crypto isakmp policy 10
   encryption aes 256
@@ -51,8 +51,8 @@ crypto isakmp policy 10
   set pfs group5
   set security-association lifetime seconds 3600
 !
- int tu0                                          ! tu0 오버레이 BR2=.22
-  ip add 172.16.0.22 255.255.255.0
+ interface tu0                                          ! tu0 오버레이 BR2=.22
+  ip address 172.16.0.22 255.255.255.0
   ip mtu 1400
   ip tcp adjust-mss 1360
   tunnel source fa0/0
@@ -69,9 +69,9 @@ crypto isakmp policy 10
   ip nhrp map multicast 203.0.113.10
   tunnel protection ipsec profile DMVPN-PROFILE shared
 !
- int fa0/1       
- ip add 172.100.30.1 255.255.255.0                                  ! BR2 LAN
- no sh
+ interface fa0/1       
+ ip address 172.100.30.1 255.255.255.0                                  ! BR2 LAN
+ no shutdown
 !
  router eigrp 200                                                    ! ★ Branch2는 EIGRP 200
   no auto-summary
@@ -92,13 +92,13 @@ crypto isakmp policy 10
 !
 ip nat inside source list NAT-ACL-BR2 interface fa0/0 overload
 !
-int fa0/0
+interface fa0/0
  ip nat outside
 !
-int fa0/1
+interface fa0/1
  ip nat inside
 !
-int tu0
+interface tu0
  ip nat inside
 !
 ```

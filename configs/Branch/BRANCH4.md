@@ -7,8 +7,8 @@
 ## Configuration
 
 ```
-en
-conf t
+enable
+configure terminal
 !
 hostname Branch4
 !
@@ -28,16 +28,16 @@ line vty 0 4
 !
 end
 !
-wr
+write memory
 !
-conf t
-int gi0/0
- ip add 203.0.113.22 255.255.255.252               ! ISP gi3/0(203.0.113.21)와 페어
- no sh
+configure terminal
+interface gi0/0
+ ip address 203.0.113.22 255.255.255.252               ! ISP gi3/0(203.0.113.21)와 페어
+ no shutdown
 !
-int gi1/0
- ip add 172.200.40.1 255.255.255.0                   ! BR4 LAN
- no sh
+interface gi1/0
+ ip address 172.200.40.1 255.255.255.0                   ! BR4 LAN
+ no shutdown
 !
  crypto isakmp policy 10
   encryption aes 256
@@ -55,8 +55,8 @@ int gi1/0
   set pfs group5
   set security-association lifetime seconds 3600
 !
- int tu1
-  ip add 172.16.10.44 255.255.255.0                       ! tu1 오버레이 BR4=.44
+ interface tu1
+  ip address 172.16.10.44 255.255.255.0                       ! tu1 오버레이 BR4=.44
   ip mtu 1400
   ip tcp adjust-mss 1360
   tunnel source gi0/0
@@ -93,13 +93,13 @@ ip access-list extended NAT-ACL-BR4
 !
 ip nat inside source list NAT-ACL-BR4 interface gi0/0 overload
 !
-int gi0/0
+interface gi0/0
  ip nat outside
 !
-int gi1/0
+interface gi1/0
  ip nat inside
 !
-int tu1
+interface tu1
  ip nat inside
 !
 ```
