@@ -142,7 +142,7 @@ interface vlan 99
 ! ===== 엣지 L3 라우티드 포트 =====
 interface gi0/0
  no switchport                        ! L3 모드 전환
- ip address 172.168.10.6 255.255.255.252  ! HQ-Edge1 gi1/0(172.168.10.5)과 P2P
+ ip address 172.168.10.6 255.255.255.252  ! HQ-Edge1 gi3/0(172.168.10.5)과 P2P
  no shutdown
 interface gi 0/1
  no switchport

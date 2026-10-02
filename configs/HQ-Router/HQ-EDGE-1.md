@@ -38,13 +38,13 @@ interface gi0/0
   no shutdown
 !
 interface gi1/0
- ip address 172.168.10.1 255.255.255.252 ! SW-Core1 gi0/0(172.168.10.6)와 연결되는 OSPF P2P 링크
+ ip address 172.168.10.1 255.255.255.252 ! HQ-Edge2 gi1/0(172.168.10.2)와 연결되는 OSPF P2P 링크
  no shutdown
 interface gi2/0
  ip address 172.168.10.9 255.255.255.252 ! SW-Core2 gi0/1(172.168.10.10)과 연결되는 OSPF P2P 링크
  no shutdown
 interface gi3/0
- ip address 172.168.10.5 255.255.255.252 ! Edge1 추가 P2P 링크
+ ip address 172.168.10.5 255.255.255.252 ! SW-Core1 gi0/0(172.168.10.6)와 연결되는 OSPF P2P 링크
  no shutdown
 !
 ! ===== 내부 OSPF (본사 LAN 도메인) =====
@@ -97,9 +97,9 @@ crypto ipsec profile DMVPN-PROFILE
 !
 crypto isakmp keepalive 10 3       ! DPD (10초 간격, 3회 재시도)
 !
-crypto isakmp key DMVPN-HUB address 0.0.0.0 0.0.0.0  ! ===== DMVPN tu0 : EIGRP 100 도메인 (Phase 3, mGRE 허브) =====
+crypto isakmp key DMVPN-HUB address 0.0.0.0 0.0.0.0
 !
-! ===== DMVPN tu0 : EIGRP 100 도메인 (Phase 3, mGRE 허브) =====
+! ===== DMVPN tu0 : EIGRP 100 도메인 (Phase 2, mGRE 허브) =====
 interface tu0                    
  ip address 172.16.0.1 255.255.255.0      ! tu0 NBMA 오버레이 .1 (Edge2는 .2)
  ip mtu 1400
@@ -116,10 +116,6 @@ interface tu0
  ip next-hop-self eigrp 200  
  no ip split-horizon eigrp 200
  tunnel protection ipsec profile DMVPN-PROFILE shared
-  no ip split-horizon eigrp 100
-  ip next-hop-self eigrp 100
-  no ip split-horizon eigrp 200
-  ip next-hop-self eigrp 200
 !
 ! ===== EIGRP 100 / 200 (오버레이 IGP) =====
  router eigrp 100

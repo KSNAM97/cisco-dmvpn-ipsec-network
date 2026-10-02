@@ -37,7 +37,7 @@ configure terminal
   no shutdown
 !
 interface gi1/0
- ip address 172.168.10.2 255.255.255.252       ! 코어  P2P
+ ip address 172.168.10.2 255.255.255.252       ! HQ-Edge1 gi1/0(172.168.10.1)과 연결되는 OSPF P2P 링크
  no shutdown
 interface gi2/0
  ip address 172.168.10.13 255.255.255.252
@@ -108,10 +108,6 @@ interface tu0
  ip next-hop-self eigrp 200  
  no ip split-horizon eigrp 200
  tunnel protection ipsec profile DMVPN-PROFILE shared
-  no ip split-horizon eigrp 100
-  ip next-hop-self eigrp 100
-  no ip split-horizon eigrp 200
-  ip next-hop-self eigrp 200
 !
  router eigrp 100
   no auto-summary

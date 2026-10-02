@@ -68,7 +68,7 @@ interface gi0/1
 !
 interface range gi0/2-3
  switchport mode access
- switchport access vlan                   ! Access1은 vlan10(Data) 담당
+ switchport access vlan 10                ! Access1은 vlan10(Data) 담당
  spanning-tree bpduguard enable           ! 단말 포트에 BPDU 들어오면 차단 (루프/스위치 오접속 방지)
  spanning-tree portfast                     ! 단말 포트 즉시 forwarding (STP 대기 생략)
  no shutdown

@@ -30,6 +30,8 @@ end
 !
 write memory
 !
+configure terminal
+!
  interface Fa0/0
   ip address 203.0.113.14 255.255.255.252               ! ISP fa5/1(203.0.113.13)와 페어
   no shutdown
@@ -81,6 +83,8 @@ crypto isakmp policy 10
   net 172.100.30.0 0.0.0.255
  !
  ip route 203.0.113.0 255.255.255.0 203.0.113.13
+ ip route 0.0.0.0 0.0.0.0 172.16.0.1                    ! 기본 경로: 주 허브
+ ip route 0.0.0.0 0.0.0.0 172.16.0.2 10                 ! 기본 경로: 예비 허브 (AD 10)
  !
  ip access-list extended NAT-ACL-BR2
  deny   ip 172.100.30.0 0.0.0.255 10.10.0.0 0.0.255.255

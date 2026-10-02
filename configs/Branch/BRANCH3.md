@@ -30,6 +30,8 @@ end
 !
 write memory
 !
+configure terminal
+!
 interface gi0/0
  ip address 203.0.113.17 255.255.255.252                      ! ISP gi2/0(203.0.113.18)와 페어
  no shutdown
@@ -81,6 +83,8 @@ interface gi1/0
   net 172.10.30.0 0.0.0.255
 !
  ip route 203.0.113.0 255.255.255.0 203.0.113.18
+ ip route 0.0.0.0 0.0.0.0 172.16.10.1                    ! 기본 경로: 주 허브
+ ip route 0.0.0.0 0.0.0.0 172.16.10.2 10                 ! 기본 경로: 예비 허브 (AD 10)
 !
 ip access-list extended NAT-ACL-BR3
  deny   ip 172.10.30.0 0.0.0.255 10.10.0.0 0.0.255.255

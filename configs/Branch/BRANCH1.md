@@ -30,6 +30,8 @@ end
 !
 write memory
 !
+configure terminal
+!
  interface fa0/0
   ip address 203.0.113.1 255.255.255.252
   no shutdown
@@ -82,6 +84,8 @@ interface fa0/1
   net 172.10.20.0 0.0.0.255
  !
  ip route 203.0.113.0 255.255.255.0 203.0.113.2                ! 공인 대역(허브 IP들)으로 가는 경로 → ISP
+ ip route 0.0.0.0 0.0.0.0 172.16.0.1                    ! 기본 경로: 주 허브
+ ip route 0.0.0.0 0.0.0.0 172.16.0.2 10                 ! 기본 경로: 예비 허브 (AD 10)
 !
 ip access-list extended NAT-ACL-BR1
  deny   ip 172.10.20.0 0.0.0.255 10.10.0.0 0.0.255.255            ! 본사  NAT 제외
@@ -89,7 +93,7 @@ ip access-list extended NAT-ACL-BR1
  deny   ip 172.10.20.0 0.0.0.255 172.10.30.0 0.0.0.255             ! BR3
  deny   ip 172.10.20.0 0.0.0.255 172.200.40.0 0.0.0.255            !BR4
  deny   ip 172.10.20.0 0.0.0.255 172.16.0.0 0.0.255.255             !터널 오버레이
- permit ip 172.10.20.0 0.0.0.255 any                               그 외(인터넷)만 NAT 
+ permit ip 172.10.20.0 0.0.0.255 any                               ! 그 외(인터넷)만 NAT 
 !
 ip nat inside source list NAT-ACL-BR1 interface fa0/0 overload
 !
