@@ -1,0 +1,16 @@
+name: notify-portfolio
+on:
+  push:
+    branches: [main]
+    paths: [README.md, "configs/**", "verification/**"]
+  workflow_dispatch:
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ secrets.PORTFOLIO_DISPATCH_TOKEN }}
+    steps:
+      # no token yet -> skip quietly; the hourly sync in portfolio-site still picks the change up
+      - name: Trigger portfolio-site sync
+        if: env.GH_TOKEN != ''
+        run: gh workflow run sync.yml --repo KSNAM97/portfolio-site
